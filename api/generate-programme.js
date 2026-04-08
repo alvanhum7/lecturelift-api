@@ -31,7 +31,26 @@ export default async function handler(req, res) {
             role: 'user',
             content: `You are a professional fitness coach. Based on the following quiz answers, generate a personalised workout programme. Return ONLY a JSON object with no markdown or extra text.
 
-Quiz answers: ${JSON.stringify(quizAnswers)}
+Quiz answers:
+- Primary goal: ${quizAnswers['primary-goal'] || 'not specified'}
+- Experience level: ${quizAnswers['experience-level'] || 'not specified'}
+- Days per week available to train: ${quizAnswers['days-per-week'] || 'not specified'}
+- Session duration: ${quizAnswers['session-duration'] || 'not specified'}
+- Equipment available: ${quizAnswers['equipment'] || 'not specified'}
+- Does outside activity outside gym: ${quizAnswers['outside-activity'] || 'No'}
+- Hours of outside activity per week: ${quizAnswers['activity-hours'] || 'none'}
+- Sports played (these affect fatigue and volume, do NOT treat as injuries): ${Object.keys(quizAnswers.checkboxes || {}).filter(k => k.startsWith('sport')).join(', ') || 'none'}
+- Current fatigue level: ${quizAnswers['fatigue-level'] || 'not specified'}
+- Academic busyness: ${quizAnswers['academic-busy'] || 'not specified'}
+- Has injuries: ${quizAnswers['injured'] || 'No'}
+- INJURIES (avoid exercises that stress these areas): ${Object.keys(quizAnswers.checkboxes || {}).filter(k => k.startsWith('injury')).join(', ') || 'none'}
+- MUSCLE GROUPS TO PRIORITISE (do slightly MORE volume for these muscles and train them earlier in the session, not avoid them): ${Object.keys(quizAnswers.checkboxes || {}).filter(k => k.startsWith('muscle')).join(', ') || 'none'}
+- Exercises to avoid: ${quizAnswers['avoid-exercises'] || 'none'}
+
+Important rules:
+- INJURIES mean avoid or modify exercises for that body part
+- MUSCLE GROUPS TO PRIORITISE mean do slightly MORE volume for those muscles (and train them earlier in the session), not avoid them
+- If a specific exercise is listed in avoid-exercises, never include it
 
 Return this exact JSON structure:
 {
