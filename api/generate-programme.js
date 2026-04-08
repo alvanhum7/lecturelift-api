@@ -36,10 +36,10 @@ Quiz answers:
 - Experience level: ${quizAnswers['experience-level'] || 'not specified'}
 - Days per week available to train: ${quizAnswers['days-per-week'] || 'not specified'}
 - Session duration: ${quizAnswers['session-duration'] || 'not specified'}
-- Equipment available: ${quizAnswers['equipment'] || 'not specified'}
+- Equipment available: ${quizAnswers['equipment'] || 'not specified'}${quizAnswers['equipment-other'] ? ` (specifically: ${quizAnswers['equipment-other']} — ONLY use exercises that can be done with this equipment, nothing else)` : ''}
 - Does outside activity outside gym: ${quizAnswers['outside-activity'] || 'No'}
 - Hours of outside activity per week: ${quizAnswers['activity-hours'] || 'none'}
-- Sports played (these affect fatigue and volume, do NOT treat as injuries): ${Object.keys(quizAnswers.checkboxes || {}).filter(k => k.startsWith('sport')).join(', ') || 'none'}
+- Sports played (these affect fatigue and volume, do NOT treat as injuries): ${Object.keys(quizAnswers.checkboxes || {}).filter(k => k.startsWith('sport')).join(', ') || 'none'}${quizAnswers['sport-other-text'] ? ` (specifically: ${quizAnswers['sport-other-text']})` : ''}
 - Current fatigue level: ${quizAnswers['fatigue-level'] || 'not specified'}
 - Academic busyness: ${quizAnswers['academic-busy'] || 'not specified'}
 - Has injuries: ${quizAnswers['injured'] || 'No'}
