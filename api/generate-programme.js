@@ -44,6 +44,7 @@ Quiz answers:
 - Academic busyness: ${quizAnswers['academic-busy'] || 'not specified'}
 - Has injuries: ${quizAnswers['injured'] || 'No'}
 - INJURIES (avoid exercises that stress these areas): ${Object.keys(quizAnswers.checkboxes || {}).filter(k => k.startsWith('injury')).join(', ') || 'none'}
+- Additional injury details (strictly avoid any exercises mentioned here): ${quizAnswers['injury-other-text'] || 'none'}
 - MUSCLE GROUPS TO PRIORITISE (do slightly MORE volume for these muscles and train them earlier in the session, not avoid them): ${Object.keys(quizAnswers.checkboxes || {}).filter(k => k.startsWith('muscle')).join(', ') || 'none'}
 - Exercises to avoid: ${quizAnswers['avoid-exercises'] || 'none'}
 
