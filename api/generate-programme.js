@@ -94,18 +94,41 @@ Return this exact JSON structure:
       "week": 1,
       "day": "Monday",
       "sessionTitle": "Session name",
-      "exercises": [
+      "blocks": [
         {
-          "name": "Exercise name",
-          "sets": 3,
-          "reps": "8-10",
-          "rest": "60s",
-          "notes": "Form tip"
+          "type": "warmup",
+          "title": "Warm-up",
+          "durationMin": 8,
+          "exercises": [
+            { "name": "Exercise name", "sets": 2, "reps": "10", "rest": "0s", "notes": "Form tip" }
+          ]
+        },
+        {
+          "type": "main",
+          "title": "Main",
+          "durationMin": 30,
+          "exercises": [
+            { "name": "Exercise name", "sets": 3, "reps": "8-10", "rest": "60s", "notes": "Form tip", "equipmentNote": "Lifting straps recommended" }
+          ]
+        },
+        {
+          "type": "cooldown",
+          "title": "Cooldown",
+          "durationMin": 5,
+          "exercises": [
+            { "name": "Stretch name", "sets": 1, "reps": "30s hold", "rest": "0s", "notes": "" }
+          ]
         }
       ]
     }
   ]
-}`
+}
+Block rules:
+- Every training day has a warmup block first and a cooldown block last
+- Valid block types: warmup, main, plyometric, resistance, cooldown
+- Use "main" for general strength/muscle sessions; use "plyometric" then "resistance" for athletic performance sessions
+- equipmentNote is optional, include only when relevant
+- Rest days: "blocks": []`
           }
         ]
       })
