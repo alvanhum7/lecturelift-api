@@ -97,38 +97,41 @@ Return this exact JSON structure:
       "blocks": [
         {
           "type": "warmup",
-          "title": "Warm-up",
-          "durationMin": 8,
+          "label": "Warm-up",
+          "collapsible": true,
           "exercises": [
-            { "name": "Exercise name", "sets": 2, "reps": "10", "rest": "0s", "notes": "Form tip" }
+            { "name": "Exercise name", "detail": "2 min" }
           ]
         },
         {
           "type": "main",
-          "title": "Main",
-          "durationMin": 30,
+          "label": "Main",
+          "collapsible": false,
           "exercises": [
             { "name": "Exercise name", "sets": 3, "reps": "8-10", "rest": "60s", "notes": "Form tip", "equipmentNote": "Lifting straps recommended" }
           ]
         },
         {
           "type": "cooldown",
-          "title": "Cooldown",
-          "durationMin": 5,
+          "label": "Cooldown",
+          "collapsible": true,
           "exercises": [
-            { "name": "Stretch name", "sets": 1, "reps": "30s hold", "rest": "0s", "notes": "" }
+            { "name": "Stretch name", "detail": "1 min" }
           ]
         }
       ]
     }
   ]
 }
-Block rules:
-- Every training day has a warmup block first and a cooldown block last
-- Valid block types: warmup, main, plyometric, resistance, cooldown
-- Use "main" for general strength/muscle sessions; use "plyometric" then "resistance" for athletic performance sessions
-- equipmentNote is optional, include only when relevant
-- Rest days: "blocks": []`
+Structure rules:
+- Generate Week 1 ONLY (every workout has "week": 1). The app repeats Week 1 for all weeks, so "weeks" is just the total programme length.
+- Include ONLY training days, exactly as many as sessionsPerWeek. Do NOT include rest days.
+- Every training day has a warmup block first and a cooldown block last, both with "collapsible": true.
+- Warm-up and cooldown exercises use "detail" in whole minutes (e.g. "2 min", "1 min") and no sets/reps. Keep their total realistic for the session length.
+- Valid block types: warmup, main, plyometric, resistance, cooldown.
+- For general strength, muscle or fitness sessions use one "main" block (collapsible false). For athletic performance sessions use a "plyometric" block then a "resistance" block instead of "main" (both collapsible false).
+- Optional per-exercise fields: "tag" (e.g. "Tier 2" on plyometric exercises, "RPE 7" on resistance exercises) and "equipmentNote" (only when relevant, e.g. "Lifting straps recommended").
+- Exercises in main, plyometric and resistance blocks always have name, sets, reps, rest and notes.`
           }
         ]
       })
