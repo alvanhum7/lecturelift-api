@@ -545,6 +545,7 @@
       <button id="ll-wk-prev" style="background:none;border:1px solid #21262d;border-radius:6px;color:#8b949e;padding:4px 10px;cursor:pointer;font-family:inherit;font-size:12px;" ${activeWeek<=1?'disabled style="opacity:.3;cursor:default"':''}>← Prev week</button>
       <span style="font-size:12px;font-weight:600;color:#8b949e;">Week ${activeWeek} / ${maxWeeks}</span>
       <button id="ll-wk-next" style="background:none;border:1px solid #21262d;border-radius:6px;color:#8b949e;padding:4px 10px;cursor:pointer;font-family:inherit;font-size:12px;" ${activeWeek>=maxWeeks?'disabled style="opacity:.3;cursor:default"':''}>Next week →</button>
+         ${(activeWeek !== 1 || activeDay !== todayIdx) ? `<button id="ll-today" style="margin-left:auto;background:none;border:1px solid #58a6ff;border-radius:6px;color:#58a6ff;padding:4px 10px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;">Today</button>` : ''}
     </div>` : ''}
   `);
 
@@ -574,6 +575,8 @@
     const wkNext = document.getElementById('ll-wk-next');
     if (wkPrev) wkPrev.addEventListener('click', () => { if (activeWeek > 1) { activeWeek--; setData = {}; render(); } });
     if (wkNext) wkNext.addEventListener('click', () => { if (activeWeek < maxWeeks) { activeWeek++; setData = {}; render(); } });
+        const todayBtn = document.getElementById('ll-today');
+    if (todayBtn) todayBtn.addEventListener('click', () => { activeWeek = 1; activeDay = getTodayIdx(); setData = {}; render(); });
   }
   }
 
