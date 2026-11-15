@@ -370,10 +370,11 @@
 
   function getTodayIdx() { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; }
 
-  function getMaxWeeks() {
+    function getMaxWeeks() {
   const prog = getCurrentProgramme();
   if (!prog || !prog.workouts) return 1;
-  return Math.max(...prog.workouts.map(w => w.week || 1));
+  const fromWorkouts = Math.max(...prog.workouts.map(w => w.week || 1));
+  return Math.max(fromWorkouts, parseInt(prog.weeks) || 1);
   }
 
   function getDays() {
