@@ -401,8 +401,7 @@
     const last = getLastWeight(ex.name);
     const sets = parseInt(ex.sets) || 3;
     setData[dayIdx][i] = Array.from({length: sets}, () => ({
-      weight: last ? last.weight : '', reps: '', rir: '', done: false
-    }));
+      weight: '', reps: '', rir: '', done: false    }));
   });
   }
 
