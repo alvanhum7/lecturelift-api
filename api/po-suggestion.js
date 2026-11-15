@@ -27,7 +27,7 @@ Rules:
 - If there is no history, set weight to null, reps to the lower end of the target range as a number, rir to 2, and tell them to pick a weight they can lift for that many reps with about 2 in reserve.
 - reps must be a number. rir must be a string: either a single value like "2", or a narrow range like "0-1" or "1-2" (values 0 to 4, never more than 2 apart). Use a range when the suggestion asks for a jump up in weight or the lifter's recent RIR was inconsistent, and a single value when they should stay steady. reason at most 14 words.
 Return ONLY this JSON, no markdown: {"weight": number or null, "reps": number, "rir": "string", "reason": "short reason"}
-
+`;
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
