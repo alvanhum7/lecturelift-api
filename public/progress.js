@@ -387,7 +387,8 @@
 
   function isRest(day) { return !day.exercises || day.exercises.length === 0 || day.sessionTitle.toLowerCase().includes('rest'); }
 
-  function isDayLogged(idx) {
+    function isDayLogged(idx) {
+  if (activeWeek !== 1) return false;
   const days = getDays(); const day = days[idx]; if (!day) return false;
   const today = new Date().toDateString();
   return getLogs().some(l => l.day === day.day && new Date(l.date).toDateString() === today);
@@ -587,7 +588,8 @@
 
   initSetData(activeDay);
   const logged = isDayLogged(activeDay);
-
+  const preview = activeWeek !== 1;
+    
   const hdr = document.createElement('div');
   hdr.className = 'll-session-header';
   hdr.innerHTML = `
@@ -597,13 +599,13 @@
     </div>
        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;">
       <button id="ll-last-sess-btn" style="background:transparent;border:1px solid #58a6ff;color:#58a6ff;font-size:13px;font-weight:600;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:inherit;">Last session ↗</button>
-      <button class="ll-log-btn ${logged ? 'll-logged' : ''}" id="ll-log-btn">${logged ? '✓ Logged Today' : 'Log Session ✓'}</button>
+      <button class="ll-log-btn ${logged ? 'll-logged' : ''}" id="ll-log-btn" ${preview ? 'disabled style="opacity:.4;cursor:default"' : ''}>${preview ? 'Preview' : (logged ? '✓ Logged Today' : 'Log Session ✓')}</button>
     </div>
   `;
   panel.appendChild(hdr);
   hdr.querySelector('#ll-last-sess-btn').addEventListener('click', () => openLastSession(day.sessionTitle));
     
-  if (!logged) {
+  if (!logged && !preview) {
     hdr.querySelector('#ll-log-btn').addEventListener('click', () => logSession(activeDay));
   }
 
@@ -622,6 +624,7 @@
 
   const day = getDays()[activeDay];
   if (!day || isRest(day)) { bar.classList.remove('visible'); return; }
+  if (activeWeek !== 1) { bar.classList.remove('visible'); return; }
 
   const logged = isDayLogged(activeDay);
   bar.classList.add('visible');
