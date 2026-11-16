@@ -333,9 +333,13 @@
       sets: 1
     }));
 
+       const sess = sb ? (await sb.auth.getSession()).data.session : null;
     const res = await fetch('https://lecturelift-api.vercel.app/api/po-suggestion', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(sess ? { Authorization: 'Bearer ' + sess.access_token } : {})
+      },
       body: JSON.stringify({
         exerciseName: ex.name,
         history,
@@ -357,8 +361,15 @@
         <span style="color:#8b949e;font-size:11px;margin-left:8px">— ${data.reason}</span>
       </div>
     `;
-  } catch (e) {
-    poBarEl.innerHTML = '<div class="ll-po-dot" style="background:#f85149"></div><div class="ll-po-text" style="color:#8b949e">Couldn\'t load suggestion — try again.</div>';
+    } catch (e) {
+    const msgs = {
+      pro_required: 'Suggested weights, reps and RIR are a Pro feature.',
+      limit_reached: "You've reached today's suggestion limit. It resets tomorrow.",
+      login_required: 'Log in to see suggestions.',
+      auth_failed: 'Log in again to see suggestions.'
+    };
+    const msg = msgs[e.message] || "Couldn't load suggestion — try again.";
+    poBarEl.innerHTML = '<div class="ll-po-dot" style="background:#f85149"></div><div class="ll-po-text" style="color:#8b949e">' + msg + '</div>';
   }
   }
 
