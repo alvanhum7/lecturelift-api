@@ -1,7 +1,26 @@
+const SUPABASE_URL = 'https://cpikfbsyigrsibjtzgsj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_FluCDaRfWlQxO5gd2GtknA_RKOtqpxf';
+
+async function consumeAiUse(req, kind) {
+  const token = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return { allowed: false, reason: 'login_required' };
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/consume_ai_use`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ p_kind: kind })
+    });
+    if (!r.ok) return { allowed: false, reason: 'auth_failed' };
+    return await r.json();
+  } catch (e) {
+    return { allowed: false, reason: 'auth_failed' };
+  }
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -9,6 +28,12 @@ export default async function handler(req, res) {
   try {
     const { exerciseName, history = [], targetSets, targetReps } = req.body || {};
     if (!exerciseName) return res.status(400).json({ error: 'exerciseName required' });
+
+    const use = await consumeAiUse(req, 'suggest');
+    if (!use.allowed) {
+      const status = (use.reason === 'login_required' || use.reason === 'auth_failed') ? 401 : 403;
+      return res.status(status).json({ error: use.reason });
+    }
 
     const recent = history.length
       ? history.map((h, i) => `${i + 1}. ${h.weight} x ${h.reps} reps` + (h.rir !== undefined && h.rir !== '' ? `, RIR ${h.rir}` : '')).join('\n')
@@ -28,6 +53,7 @@ Rules:
 - reps must be a number. rir must be a string: either a single value like "2", or a narrow range like "0-1" or "1-2" (values 0 to 4, never more than 2 apart). Use a range when the suggestion asks for a jump up in weight or the lifter's recent RIR was inconsistent, and a single value when they should stay steady. reason at most 14 words.
 Return ONLY this JSON, no markdown: {"weight": number or null, "reps": number, "rir": "string", "reason": "short reason"}
 `;
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
