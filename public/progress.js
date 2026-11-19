@@ -322,7 +322,10 @@
 
   // ── PROGRESSIVE OVERLOAD SUGGESTION ──
   async function fetchPOSuggestion(ex, poBarEl) {
-  poBarEl.innerHTML = '<div class="ll-po-dot" style="background:#8b949e;animation:ll-po-pulse 1.2s infinite"></div><div class="ll-po-text" style="color:#8b949e">Getting AI suggestion…</div>';
+  const day = new Date().toISOString().slice(0, 10);
+  let cache = {};
+  try { cache = JSON.parse(localStorage.getItem('ll_po_cache') || '{}'); } catch (e) {}
+  if (cache.day !== day || !cache.items) cache = { day, items: {} };
 
   try {
     const wl = getWeightLogs();
@@ -332,24 +335,30 @@
       rir: e.rir,
       sets: 1
     }));
+    const ckey = [ex.name, ex.sets, ex.reps, getUnit(), JSON.stringify(history)].join('|');
+    let data = cache.items[ckey];
 
-       const sess = sb ? (await sb.auth.getSession()).data.session : null;
-    const res = await fetch('https://lecturelift-api.vercel.app/api/po-suggestion', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(sess ? { Authorization: 'Bearer ' + sess.access_token } : {})
-      },
-      body: JSON.stringify({
-        exerciseName: ex.name,
-        history,
-        targetSets: parseInt(ex.sets) || 3,
-        targetReps: ex.reps || 8
-      })
-    });
-
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
+    if (!data) {
+      poBarEl.innerHTML = '<div class="ll-po-dot" style="background:#8b949e;animation:ll-po-pulse 1.2s infinite"></div><div class="ll-po-text" style="color:#8b949e">Getting AI suggestion…</div>';
+      const sess = sb ? (await sb.auth.getSession()).data.session : null;
+      const res = await fetch('https://lecturelift-api.vercel.app/api/po-suggestion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(sess ? { Authorization: 'Bearer ' + sess.access_token } : {})
+        },
+        body: JSON.stringify({
+          exerciseName: ex.name,
+          history,
+          targetSets: parseInt(ex.sets) || 3,
+          targetReps: ex.reps || 8
+        })
+      });
+      data = await res.json();
+      if (data.error) throw new Error(data.error);
+      cache.items[ckey] = data;
+      try { localStorage.setItem('ll_po_cache', JSON.stringify(cache)); } catch (e) {}
+    }
 
     poBarEl.innerHTML = `
       <div class="ll-po-dot" style="background:#3fb950"></div>
@@ -361,7 +370,7 @@
         <span style="color:#8b949e;font-size:11px;margin-left:8px">— ${data.reason}</span>
       </div>
     `;
-    } catch (e) {
+  } catch (e) {
     const msgs = {
       pro_required: 'Suggested weights, reps and RIR are a Pro feature.',
       limit_reached: "You've reached today's suggestion limit. It resets tomorrow.",
