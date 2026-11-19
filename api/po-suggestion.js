@@ -70,6 +70,10 @@ Return ONLY this JSON, no markdown: {"weight": number or null, "reps": number, "
     });
 
     const data = await response.json();
+      if (!response.ok) {
+      console.error('anthropic error:', response.status, JSON.stringify(data));
+      return res.status(502).json({ error: 'ai_failed' });
+    }
     const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
     const clean = text.replace(/```json|```/g, '').trim();
     const out = JSON.parse(clean);
