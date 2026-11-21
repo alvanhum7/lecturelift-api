@@ -60,8 +60,8 @@ Return ONLY this JSON, no markdown: {"weight": number or null, "reps": number, "
         'Content-Type': 'application/json',
         'x-api-key': process.env.ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01'
-           
-        body: JSON.stringify({
+      },
+      body: JSON.stringify({
         model: 'claude-haiku-5-5',
         max_tokens: 600,
         output_config: { effort: 'low' },
@@ -70,10 +70,11 @@ Return ONLY this JSON, no markdown: {"weight": number or null, "reps": number, "
     });
 
     const data = await response.json();
-      if (!response.ok) {
+    if (!response.ok) {
       console.error('anthropic error:', response.status, JSON.stringify(data));
       return res.status(502).json({ error: 'ai_failed' });
     }
+
     const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
     const clean = text.replace(/```json|```/g, '').trim();
     const out = JSON.parse(clean);
