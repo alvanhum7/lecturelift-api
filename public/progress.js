@@ -339,7 +339,7 @@
     let data = cache.items[ckey];
 
     if (!data) {
-      poBarEl.innerHTML = '<div class="ll-po-dot" style="background:#8b949e;animation:ll-po-pulse 1.2s infinite"></div><div class="ll-po-text" style="color:#8b949e">Getting AI suggestion…</div>';
+      poBarEl.innerHTML = '<div class="ll-po-dot" style="background:#8b949e;animation:ll-po-pulse 1.2s infinite"></div><div class="ll-po-text" style="color:#8b949e">Your coach is working out your next sets……</div>';
       const sess = sb ? (await sb.auth.getSession()).data.session : null;
       const res = await fetch('https://lecturelift-api.vercel.app/api/po-suggestion', {
         method: 'POST',
@@ -741,7 +741,7 @@
     <div class="ll-ex-card-body">
       <div class="ll-po-bar" id="po-${dayIdx}-${exIdx}">
         <div class="ll-po-dot"></div>
-        <div class="ll-po-text">Open card to load AI suggestion…</div>
+        <div class="ll-po-text">Open this card to get your coach's suggestion……</div>
       </div>
       ${lastHintHtml}
       <div class="ll-set-hdrs">
